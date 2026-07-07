@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternHack Hub — Elite Hackathon & Internship Tracker</title>
+    <meta name="description" content="Discover, track, and verify the latest elite hackathons, career portal postings, and student engineering internships in real-time.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=1.0.2">
+</head>
+<body>
+    <!-- Background glow elements for rich visual aesthetic -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-logo">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#brand-grad)" />
+                        <path d="M2 17L12 22L22 17" stroke="url(#brand-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="url(#brand-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="brand-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#00f2fe"/>
+                                <stop offset="1" stop-color="#4facfe"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>InternHack Hub</h1>
+                    <p>Elite Opportunity Tracker</p>
+                </div>
+            </div>
+
+            <!-- Header Action & Date display -->
+            <div class="header-meta">
+                <div class="time-widget">
+                    <span class="icon">🕒</span>
+                    <span id="current-time">July 5, 2026</span>
+                </div>
+                <button class="btn btn-primary" id="btn-add-opportunity">
+                    <span class="btn-icon">+</span> Add Opportunity
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Counter Panel -->
+        <section class="stats-panel" aria-label="Opportunity Metrics">
+            <div class="stat-card">
+                <div class="stat-icon icon-total">📂</div>
+                <div class="stat-data">
+                    <span class="stat-value" id="stat-total">0</span>
+                    <span class="stat-label">Total Listings</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-active">⚡</div>
+                <div class="stat-data">
+                    <span class="stat-value text-green" id="stat-active">0</span>
+                    <span class="stat-label">Active / Ongoing</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-portals">💼</div>
+                <div class="stat-data">
+                    <span class="stat-value text-violet" id="stat-portals">0</span>
+                    <span class="stat-label">Careers Portals</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-expiring">🔥</div>
+                <div class="stat-data">
+                    <span class="stat-value text-orange" id="stat-expiring">0</span>
+                    <span class="stat-label">Closing Soon (&lt; 7d)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controls (Filters, Search, Sort) -->
+        <section class="controls-panel" aria-label="Search and Filter Controls">
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="Search by name, company, stack, tracks..." aria-label="Search opportunities">
+            </div>
+
+            <div class="filter-sort-group">
+                <div class="filter-tabs" id="filter-tabs" role="tablist">
+                    <button class="filter-tab active" data-filter="all" role="tab" aria-selected="true">All</button>
+                    <button class="filter-tab" data-filter="hackathon" role="tab" aria-selected="false">Hackathons</button>
+                    <button class="filter-tab" data-filter="internship" role="tab" aria-selected="false">Internships</button>
+                    <button class="filter-tab" data-filter="careers" role="tab" aria-selected="false">Careers Portals</button>
+                    <button class="filter-tab" data-filter="reference" role="tab" aria-selected="false">References</button>
+                </div>
+
+                <div class="sort-wrapper">
+                    <label for="sort-select" class="sr-only">Sort by</label>
+                    <select id="sort-select" class="custom-select">
+                        <option value="deadline-asc">Sort by: Deadline (Soonest)</option>
+                        <option value="deadline-desc">Sort by: Deadline (Furthest)</option>
+                        <option value="name-asc">Sort by: Name (A - Z)</option>
+                        <option value="company-asc">Sort by: Organization</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Opportunities Grid -->
+        <main class="grid-container">
+            <div class="grid-content" id="opportunities-grid">
+                <!-- Cards dynamically generated via JavaScript -->
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading opportunities...</p>
+                </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div class="empty-state hidden" id="empty-state">
+                <div class="empty-icon">📂</div>
+                <h3>No Opportunities Found</h3>
+                <p>Try refining your search or add a new opportunity manually.</p>
+                <button class="btn btn-secondary" id="btn-reset-filters">Reset Filters</button>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>InternHack Hub © 2026. Built with Vanilla Web Architecture. Premium Aesthetic System.</p>
+            <p class="verification-disclaimer">⚠️ Note: Link verification pings are executed client-side using request tests.</p>
+        </footer>
+    </div>
+
+    <!-- Modal: Detail View -->
+    <div class="modal-overlay hidden" id="modal-detail">
+        <div class="modal-box glass-panel modal-lg">
+            <button class="modal-close" id="btn-close-detail" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <span class="modal-badge-group">
+                    <span class="badge badge-category" id="detail-category">Hackathon</span>
+                    <span class="badge badge-status" id="detail-status">Active</span>
+                </span>
+                <h2 id="detail-title">Opportunity Name</h2>
+                <h3 id="detail-company" class="detail-company-subtitle">Company Name</h3>
+            </div>
+            
+            <div class="modal-body">
+                <div class="detail-grid">
+                    <div class="detail-main">
+                        <section class="detail-section">
+                            <h4>Overview & Details</h4>
+                            <p id="detail-description">Comprehensive details about the program and event.</p>
+                        </section>
+
+                        <section class="detail-section" id="detail-eligibility-wrapper">
+                            <h4>Eligibility & Criteria</h4>
+                            <div class="eligibility-content" id="detail-eligibility">Open to engineering and technology disciplines.</div>
+                        </section>
+                    </div>
+
+                    <div class="detail-sidebar">
+                        <div class="info-card">
+                            <div class="info-item">
+                                <span class="info-icon">📅</span>
+                                <div class="info-details">
+                                    <span class="info-title">Event Schedule</span>
+                                    <span class="info-value" id="detail-dates">July - Sept</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-icon">⏰</span>
+                                <div class="info-details">
+                                    <span class="info-title">Application Deadline</span>
+                                    <span class="info-value text-highlight" id="detail-deadline">July 10, 2026</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-icon">🔗</span>
+                                <div class="info-details">
+                                    <span class="info-title">Verified URL Status</span>
+                                    <span class="info-value" id="detail-link-status">
+                                        <span class="dot-indicator dot-green"></span> Checking...
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-card">
+                            <a href="#" target="_blank" class="btn btn-primary btn-block text-center" id="detail-btn-apply">
+                                Go to Official Portal ↗
+                            </a>
+                            <button class="btn btn-secondary btn-block" id="detail-btn-copy">
+                                Copy Opportunity Link 📋
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Opportunity -->
+    <div class="modal-overlay hidden" id="modal-add">
+        <div class="modal-box glass-panel modal-md">
+            <button class="modal-close" id="btn-close-add" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h2>Add Custom Opportunity</h2>
+                <p>Track a custom hackathon, internship, or direct hiring portal.</p>
+            </div>
+            
+            <form id="form-add-opportunity" class="modal-form">
+                <div class="modal-form-content">
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="form-title">Opportunity Title <span class="required">*</span></label>
+                            <input type="text" id="form-title" required placeholder="e.g., Google Kickstart 2026">
+                        </div>
+                        <div class="form-group">
+                            <label for="form-company">Organization/Company <span class="required">*</span></label>
+                            <input type="text" id="form-company" required placeholder="e.g., Google India">
+                        </div>
+                    </div>
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="form-category">Category <span class="required">*</span></label>
+                            <select id="form-category" required class="custom-select">
+                                <option value="hackathon">Hackathon</option>
+                                <option value="internship">Internship Program</option>
+                                <option value="careers">Careers Portal / Direct Hiring</option>
+                                <option value="reference">Reference Guide</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="form-deadline">Deadline Date <span class="required">*</span></label>
+                            <input type="date" id="form-deadline" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="form-link">Official Portal URL <span class="required">*</span></label>
+                        <input type="url" id="form-link" required placeholder="https://example.com/apply">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="form-description">Description & Highlights <span class="required">*</span></label>
+                        <textarea id="form-description" required rows="3" placeholder="Brief summary of what the challenge/program is about. Mention tracks, prizes, or benefits."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="form-eligibility">Eligibility Criteria</label>
+                        <input type="text" id="form-eligibility" placeholder="e.g., 3rd & 4th year B.Tech, Circuit branches">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="form-dates">General Timeline Info</label>
+                        <input type="text" id="form-dates" placeholder="e.g., July 10 – July 16, 2026">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-add">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save to Tracker</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <!-- Modal: Confirm Delete -->
+    <div class="modal-overlay hidden" id="modal-confirm">
+        <div class="modal-box glass-panel modal-sm">
+            <button class="modal-close" id="btn-close-confirm" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h2>Delete Opportunity?</h2>
+                <p>This action cannot be undone.</p>
+            </div>
+            <div class="modal-body text-center" style="text-align: center; padding: 1.5rem 2rem;">
+                <p>Are you sure you want to delete <br><strong id="confirm-opportunity-title" style="color: var(--primary); font-size: 1.1rem; display: inline-block; margin-top: 0.5rem;"></strong>?</p>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-confirm">Cancel</button>
+                <button type="button" class="btn btn-primary btn-delete" id="btn-action-confirm" style="background: var(--color-closed); color: #fff; box-shadow: 0 4px 15px rgba(255, 74, 107, 0.3);">Delete 🗑️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">Link copied successfully!</div>
+
+    <!-- Core App Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
